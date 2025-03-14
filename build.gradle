@@ -1,0 +1,91 @@
+
+buildscript {
+    ext {
+        springCloudAwsVersion = '3.0.0'
+        awsSdkVersion = '2.29.47'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+}
+
+group = 'com.lgf'
+version = '0.0.1-SNAPSHOT'
+
+
+repositories {
+    mavenCentral()
+}
+
+
+apply plugin: 'io.spring.dependency-management'
+
+dependencies {
+
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-jersey")
+    implementation("org.springframework.boot:spring-boot-starter-json")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-integration")
+    implementation("org.springframework.integration:spring-integration-http")
+
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-sqs")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-sns")
+
+    //AWS SDK
+    implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
+    implementation("software.amazon.awssdk:sts")
+    implementation("software.amazon.awssdk:sns")
+    implementation("software.amazon.awssdk:sqs")
+    implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:secretsmanager")
+    implementation("software.amazon.awssdk:s3-event-notifications")
+
+
+    //BOLT
+
+    implementation 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    //Third Party
+    implementation 'org.json:json:20240303'
+
+    // XML Annotations and processing
+    implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
+    implementation 'org.javassist:javassist:3.25.0-GA'
+
+    // ESB SERVICE COMMONS
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+}
+springBoot {
+    buildInfo()
+}
+bootRun {
+    jvmArgs = ["-Dspring.profiles.active=local"]
+}
+
+jar {
+    enabled = false
+}
+bootJar {
+    manifest {
+        attributes('Implementation-Version': archiveVersion)
+    }
+    archiveClassifier = ''
+}
+
+processResources {
+    filesMatching(['application*.yml', 'banner.txt']) {
+        expand(project.properties)
+    }
+}
